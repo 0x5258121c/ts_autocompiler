@@ -1,0 +1,44 @@
+#!/bin/bash
+
+if [[ $1 == "--help" ]]\
+	|| [[ $1 == "-h" ]]\
+	|| [[ ! $1 ]]
+then
+	echo "btugu's typescript autocompiler usage:"
+	echo "ts_autocompiler [-o outputfile.js] inputfile.ts"
+	exit 0
+fi
+
+outputfile=0
+inputfile=`pwd`/$1
+
+if [[ $1 = '-o' ]]
+then
+	$outputfile=$2
+	$inputfile=`pwd`/$3
+fi
+
+clear
+
+msg="ts_autocompiler: autocompiling $inputfile"
+echo msg
+
+size_cmp=`stat --printf="%s" $inputfile`
+while sleep 0.5s
+do
+	size_cur=`stat --printf="%s" $inputfile`
+	if [[ $size_cmp != $size_cur ]]
+	then
+		if [[ $outputfile == 0 ]]
+		then
+			clear
+			echo msg
+			size_cmp=$size_cur
+			tsc $inputfile
+		else
+			clear
+			echo msg
+			tsc --outFile $outputfile $inputfile
+		fi
+	fi
+done
